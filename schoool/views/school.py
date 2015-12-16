@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from datetime import date
+import json
 
 from werkzeug.exceptions import BadRequest
 from flask import Blueprint, request
 import requests
 
+from schoool import cache
 from schoool.renderers import render_json
 
 
@@ -39,6 +41,11 @@ def search():
     if not query:
         raise BadRequest('The required parameter "query" is missing.')
 
+    cache_key = 'school-search:' + query
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return render_json(json.loads(cached_data))
+
     data = []
     for host in URLS:
         try:
@@ -46,8 +53,8 @@ def search():
             params = {
                 'kraOrgNm': query,
             }
-            json = requests.get(url, params=params).json
-            dirty = json.get('resultSVO').get('orgDVOList')
+            json_data = requests.get(url, params=params).json
+            dirty = json_data.get('resultSVO').get('orgDVOList')
             data += [{
                 'code': school['orgCode'],
                 'name': school['kraOrgNm'],
@@ -57,6 +64,7 @@ def search():
         except Exception:
             pass
 
+    cache.set(cache_key, json.dumps(data))
     return render_json(data)
 
 
