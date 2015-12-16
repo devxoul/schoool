@@ -73,6 +73,11 @@ def meals(code):
     year = request.values.get('year', date.today().year, type=int)
     month = request.values.get('month', date.today().month, type=int)
 
+    cache_key = 'school-meals:{}:{}-{}'.format(code, year, month)
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return render_json(json.loads(cached_data))
+
     url = 'http://hes.sen.go.kr/sts_sci_md00_001.do'
     data = {
         'schulCode': code,
@@ -103,4 +108,5 @@ def meals(code):
         meal['dinner'] = items[dinner_index + 1:]
         meals.append(meal)
 
+    cache.set(cache_key, json.dumps(meals))
     return render_json(meals)
