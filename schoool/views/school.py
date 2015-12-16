@@ -78,7 +78,28 @@ def meals(code):
     if cached_data:
         return render_json(json.loads(cached_data))
 
-    url = 'http://hes.sen.go.kr/sts_sci_md00_001.do'
+    if code[0] == 'A':
+        host_cache_key = 'school-host:{}'.format(code)
+        host = cache.get(host_cache_key)
+        if not host:
+            url = 'http://www.schoolinfo.go.kr/index.jsp?HG_CD={}'.format(code)
+            html = requests.get(url).html
+            address = html.find('dt', string='주소')\
+                          .find_next_sibling('dd')\
+                          .string
+            cities = [u'서울', u'부산', u'대구', u'인천', u'광주', u'대전', u'울산',
+                      u'세종', u'경기', u'강원', u'충청북도', u'충청남도', u'전라북도',
+                      u'전라남도', u'경상북도', u'경상남도', u'제주']
+            for i, city in enumerate(cities):
+                if address.startswith(city):
+                    host = URLS[i]
+                    cache.set(host_cache_key, host)
+                    break
+    else:
+        index = ord(code[0]) - 66
+        host = URLS[index]
+
+    url = 'http://{}/sts_sci_md00_001.do'.format(host)
     data = {
         'schulCode': code,
         'schulCrseScCode': 4,
