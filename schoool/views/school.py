@@ -94,7 +94,7 @@ def meals(code):
 
     for items in tds:
         meal = {
-            'date': '{}-{}-{:02d}'.format(year, month, int(items[0])),
+            'date': '{}-{:02d}-{:02d}'.format(year, month, int(items[0])),
             'lunch': [],
             'dinner': [],
         }
