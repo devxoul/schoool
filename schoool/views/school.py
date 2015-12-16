@@ -39,18 +39,24 @@ def search():
     if not query:
         raise BadRequest('The required parameter "query" is missing.')
 
-    url = 'http://hes.sen.go.kr/spr_ccm_cm01_100.do'
-    params = {
-        'kraOrgNm': query,
-    }
-    json = requests.get(url, params=params).json
-    dirty = json.get('resultSVO').get('orgDVOList')
-    data = [{
-        'code': data['orgCode'],
-        'name': data['kraOrgNm'],
-        'address': data['zipAdres'],
-        'type': data['schulCrseScCodeNm'],
-    } for data in dirty]
+    data = []
+    for host in URLS:
+        try:
+            url = 'http://{}/spr_ccm_cm01_100.do'.format(host)
+            params = {
+                'kraOrgNm': query,
+            }
+            json = requests.get(url, params=params).json
+            dirty = json.get('resultSVO').get('orgDVOList')
+            data += [{
+                'code': school['orgCode'],
+                'name': school['kraOrgNm'],
+                'address': school['zipAdres'],
+                'type': school['schulCrseScCodeNm'],
+            } for school in dirty]
+        except Exception:
+            pass
+
     return render_json(data)
 
 
