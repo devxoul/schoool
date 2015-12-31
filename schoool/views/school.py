@@ -107,27 +107,28 @@ def meals(code):
         'mm': month,
     }
 
-    html = requests.get(url, data=data).html
-    tds = [list(td.stripped_strings) for td in html.find_all('td')]
-    tds = filter(None, tds)
-
     meals = []
 
-    for items in tds:
-        meal = {
-            'date': '{}-{:02d}-{:02d}'.format(year, month, int(items[0])),
-            'lunch': [],
-            'dinner': [],
-        }
+    html = requests.get(url, data=data).html
+    if u'자료가 없습니다.' not in html.decode('utf-8'):
+        tds = [list(td.stripped_strings) for td in html.find_all('td')]
+        tds = filter(None, tds)
 
-        try:
-            dinner_index = items.index(u'[석식]')
-        except ValueError:
-            dinner_index = len(items) - 1
+        for items in tds:
+            meal = {
+                'date': '{}-{:02d}-{:02d}'.format(year, month, int(items[0])),
+                'lunch': [],
+                'dinner': [],
+            }
 
-        meal['lunch'] = items[2:dinner_index]
-        meal['dinner'] = items[dinner_index + 1:]
-        meals.append(meal)
+            try:
+                dinner_index = items.index(u'[석식]')
+            except ValueError:
+                dinner_index = len(items) - 1
+
+            meal['lunch'] = items[2:dinner_index]
+            meal['dinner'] = items[dinner_index + 1:]
+            meals.append(meal)
 
     cache.set(cache_key, json.dumps(meals))
     return render_json(meals)
