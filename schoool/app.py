@@ -17,7 +17,7 @@ def create_app(config=None):
     if config:
         app.config.from_pyfile(os.path.abspath(config))
     else:
-        raise Exception('config file is not given')
+        app.config.from_envvar('CONFIG')
 
     install_errorhandler(app)
     register_blueprints(app)
