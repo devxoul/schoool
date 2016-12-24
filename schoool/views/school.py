@@ -12,23 +12,23 @@ from schoool.renderers import render_json
 
 
 URLS = [
-    'hes.sen.go.kr',  # 서울
-    'hes.pen.go.kr',  # 부산
-    'hes.dge.go.kr',  # 대구
-    'hes.ice.go.kr',  # 인천
-    'hes.gen.go.kr',  # 광주
-    'hes.dje.go.kr',  # 대전
-    'hes.use.go.kr',  # 울산
-    'hes.sje.go.kr',  # 세종
-    'hes.goe.go.kr',  # 경기
-    'hes.kwe.go.kr',  # 강원
-    'hes.cbe.go.kr',  # 충북
-    'hes.cne.go.kr',  # 충남
-    'hes.jbe.go.kr',  # 전북
-    'hes.jne.go.kr',  # 전남
-    'hes.gbe.kr',     # 경북
-    'hes.gne.go.kr',  # 경남
-    'hes.jje.go.kr',  # 제주
+    'stu.sen.go.kr',  # 서울
+    'stu.pen.go.kr',  # 부산
+    'stu.dge.go.kr',  # 대구
+    'stu.ice.go.kr',  # 인천
+    'stu.gen.go.kr',  # 광주
+    'stu.dje.go.kr',  # 대전
+    'stu.use.go.kr',  # 울산
+    'stu.sje.go.kr',  # 세종
+    'stu.goe.go.kr',  # 경기
+    'stu.kwe.go.kr',  # 강원
+    'stu.cbe.go.kr',  # 충북
+    'stu.cne.go.kr',  # 충남
+    'stu.jbe.go.kr',  # 전북
+    'stu.jne.go.kr',  # 전남
+    'stu.gbe.kr',     # 경북
+    'stu.gne.go.kr',  # 경남
+    'stu.jje.go.kr',  # 제주
 ]
 
 
