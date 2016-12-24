@@ -46,23 +46,22 @@ def search():
     if cached_data:
         return render_json(json.loads(cached_data))
 
+    url = 'http://m.schoolinfo.go.kr/disclosure/school/result'
+    params = {
+        'hgNmEncUri': query,
+    }
+    html = requests.get(url, params=params).html
     data = []
-    for host in URLS:
-        try:
-            url = 'http://{}/spr_ccm_cm01_100.do'.format(host)
-            params = {
-                'kraOrgNm': query,
-            }
-            json_data = requests.get(url, params=params).json
-            dirty = json_data.get('resultSVO').get('orgDVOList')
-            data += [{
-                'code': school['orgCode'],
-                'name': school['kraOrgNm'],
-                'address': school['zipAdres'],
-                'type': school['schulCrseScCodeNm'],
-            } for school in dirty]
-        except Exception:
-            pass
+    for panel in html.find_all(class_='panel'):
+        type_ = panel.find(class_='panel-title').find('button').text
+        for item in panel.find_all(class_='list-group-item'):
+            name = item.contents[1].strip()
+            code = item['href'].split('/')[-1]
+            data.append({
+                'name': name,
+                'type': type_,
+                'code': code,
+            })
 
     cache.set(cache_key, json.dumps(data))
     return render_json(data)
@@ -82,10 +81,11 @@ def meals(code):
         host_cache_key = 'school-host:{}'.format(code)
         host = cache.get(host_cache_key)
         if not host:
-            url = 'http://www.schoolinfo.go.kr/index.jsp?HG_CD={}'.format(code)
+            url = 'http://m.schoolinfo.go.kr/disclosure/gongsi/infoDefault/{}'\
+                .format(code)
             html = requests.get(url).html
-            address = html.find('dt', string='주소')\
-                          .find_next_sibling('dd')\
+            address = html.find('td', string='주소')\
+                          .find_next_sibling('td')\
                           .string
             cities = [u'서울', u'부산', u'대구', u'인천', u'광주', u'대전', u'울산',
                       u'세종', u'경기', u'강원', u'충청북도', u'충청남도', u'전라북도',
