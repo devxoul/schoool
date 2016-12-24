@@ -1,22 +1,28 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 
 from bs4 import BeautifulSoup
 from flask import Flask, request, Response
 import requests
 from werkzeug.exceptions import default_exceptions
 
+from schoool import cache
 from schoool.views import blueprints
 
 
-def create_app():
+def create_app(config=None):
     app = Flask(__name__)
-    app.debug = True
-    app.autoreload = app.debug
+    if config:
+        app.config.from_pyfile(os.path.abspath(config))
+    else:
+        raise Exception('config file is not given')
 
     install_errorhandler(app)
     register_blueprints(app)
+
+    cache.init_app(app)
 
     monkey_patch_response_html()
     monkey_patch_response_json()

@@ -7,6 +7,7 @@ from schoool.app import create_app
 
 
 manager = Manager(create_app)
+manager.add_option('-c', '--config', dest='config', required=True)
 
 
 @manager.shell
