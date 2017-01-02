@@ -104,7 +104,7 @@ def meals(code):
         'schulCode': code,
         'schulCrseScCode': 4,
         'ay': year,
-        'mm': month,
+        'mm': '{:02d}'.format(month),
     }
 
     meals = []
